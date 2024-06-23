@@ -343,30 +343,24 @@ void lock_after(uint64_t tid, uint64_t lockaddr) {
 		tg->locklist[eidx].lock_id = lockaddr;
 
 		tg->lockidx ++;
-		
-	} else {   //如果表格里有，有向图删除一条边！！！
+	} 
 
-		struct source_type from;
-		from.id = tid;
-		from.type = PROCESS;
-		add_vertex(from);
+	//如果有这个边就删除
+	struct source_type from;
+	from.id = tid;
+	from.type = PROCESS;
+	add_vertex(from);
 
-		struct source_type to;
-		to.id = tg->locklist[idx].id;
-		to.type = PROCESS;
-		add_vertex(to);
+	struct source_type to;
+	to.id = tg->locklist[idx].id;
+	to.type = PROCESS;
+	add_vertex(to);
 
-		
+	if (verify_edge(from, to)){
+		remove_edge(from, to);
 		tg->locklist[idx].degress --;
-
-		if (verify_edge(from, to))
-			remove_edge(from, to);
-
 		tg->locklist[idx].id = tid;
-		
 	}
-	 
-	
 }
 
 /*
@@ -554,8 +548,8 @@ void *t5_cb(void *arg) {
 	sleep(1);
 	pthread_mutex_lock(&r1);
 
-	pthread_mutex_unlock(&r5);
 	pthread_mutex_unlock(&r1);
+	pthread_mutex_unlock(&r5);
 
 }
 
